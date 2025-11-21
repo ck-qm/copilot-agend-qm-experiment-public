@@ -1,0 +1,62 @@
+<div class="game-container">
+  <div class="game-header">
+    <h1 class="game-title">QualityMinds Jump & Run</h1>
+    <div class="score-display">
+      <div class="score-item">
+        <span class="label">Score:</span>
+        <span class="value">{{ currentScore() }}</span>
+      </div>
+      <div class="score-item">
+        <span class="label">Highscore:</span>
+        <span class="value">{{ highscore() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="game-canvas-wrapper">
+    <canvas #gameCanvas width="800" height="600" class="game-canvas"></canvas>
+
+    @if (!gameStarted() && !gameOver()) {
+      <div class="game-overlay">
+        <div class="start-screen">
+          <h2>Welcome to QualityMinds Jump & Run!</h2>
+          <p class="instructions">
+            Use <strong>Arrow Keys</strong> or <strong>WASD</strong> to move<br>
+            Press <strong>Space</strong> or <strong>↑</strong> to jump<br>
+            Collect golden coins to earn points!
+          </p>
+          <button class="btn-primary" (click)="startGame()">Start Game</button>
+        </div>
+      </div>
+    }
+
+    @if (gameOver()) {
+      <div class="game-overlay">
+        <div class="game-over-screen">
+          <h2>Game Over!</h2>
+          <p class="final-score">Final Score: <strong>{{ currentScore() }}</strong></p>
+          @if (currentScore() >= highscore()) {
+            <p class="congrats">🎉 New Highscore! 🎉</p>
+          }
+          <div class="share-section">
+            <p>Share your score:</p>
+            <div class="share-input-group">
+              <input 
+                type="text" 
+                [value]="shareUrl()" 
+                readonly 
+                class="share-input"
+              >
+              <button class="btn-copy" (click)="copyShareUrl()">Copy</button>
+            </div>
+          </div>
+          <button class="btn-primary" (click)="startGame()">Play Again</button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="game-footer">
+    <p class="credits">Made with ❤️ for QualityMinds</p>
+  </div>
+</div>
