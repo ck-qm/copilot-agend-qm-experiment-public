@@ -112,7 +112,7 @@ export class Game {
     }
   }
 
-  private gameLoop = (): void => {
+  private gameLoop(): void {
     const state = this.gameStateSubject.value;
     if (!state.isRunning || state.isGameOver) {
       return;
@@ -122,8 +122,8 @@ export class Game {
     this.checkCollisions(state);
     this.gameStateSubject.next({ ...state });
 
-    this.animationFrameId = requestAnimationFrame(this.gameLoop);
-  };
+    this.animationFrameId = requestAnimationFrame(() => this.gameLoop());
+  }
 
   private updatePlayer(state: GameState): void {
     // Horizontal movement

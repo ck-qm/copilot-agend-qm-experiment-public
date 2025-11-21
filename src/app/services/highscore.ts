@@ -11,12 +11,13 @@ export interface HighscoreEntry {
 })
 export class Highscore {
   private db: IDBDatabase | null = null;
+  private dbInitPromise: Promise<void> | null = null;
   private readonly DB_NAME = 'JumpAndRunDB';
   private readonly STORE_NAME = 'highscores';
   private readonly DB_VERSION = 1;
 
   constructor() {
-    this.initDB();
+    this.dbInitPromise = this.initDB();
   }
 
   private async initDB(): Promise<void> {
@@ -43,10 +44,14 @@ export class Highscore {
     });
   }
 
-  async saveScore(score: number): Promise<number> {
-    if (!this.db) {
-      await this.initDB();
+  private async ensureDBReady(): Promise<void> {
+    if (this.dbInitPromise) {
+      await this.dbInitPromise;
     }
+  }
+
+  async saveScore(score: number): Promise<number> {
+    await this.ensureDBReady();
 
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.STORE_NAME], 'readwrite');
@@ -63,9 +68,7 @@ export class Highscore {
   }
 
   async getHighscore(): Promise<number> {
-    if (!this.db) {
-      await this.initDB();
-    }
+    await this.ensureDBReady();
 
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.STORE_NAME], 'readonly');
@@ -86,9 +89,7 @@ export class Highscore {
   }
 
   async getAllScores(): Promise<HighscoreEntry[]> {
-    if (!this.db) {
-      await this.initDB();
-    }
+    await this.ensureDBReady();
 
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.STORE_NAME], 'readonly');
